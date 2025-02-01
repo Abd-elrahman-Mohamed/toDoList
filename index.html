@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ToDo List</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="music">
+      <audio id="background-music" src="./Lege-cy _ Plastar _ ليجي سي _ بلاستر.mp3" loop></audio>
+      <button id="music-toggle">Play Music</button>
+    </div>
+    <h1>To-Do List</h1>
+    <form id="todo-form">
+      <input placeholder="Write Ur Task Here..." id="input" type="text" aria-label="Task input" />
+      <button id="addBtn" type="submit">Add Task</button>
+    </form>
+    <span class="err1" aria-live="polite">*You can't add the same task twice</span>
+    <span class="err2" aria-live="polite">*You can't add an empty task 😒</span>
+    <ul id="task-list"></ul>
+    <script src="main.js"></script>
+  </div>
+</body>
+</html>
