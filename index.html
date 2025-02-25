@@ -4,23 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="container">
-      <h1>ToDo List</h1>
-      <div class="first">
-        <input placeholder="add task" type="text" id="input" />
-        <div class="overlay">
-          <p class="errText">*please add value</p>
-        </div>
+      <h1 class="title">ToDo List</h1>
+      <inputDiv id="inputDiv">
+        <input type="text" placeholder="Write Your Tasks Now..." id="input" />
         <button id="addBtn">Add</button>
-      </div>
-
-      <ul id="list"></ul>
-      <button id="clearBtn">Delete All</button>
+      </inputDiv>
+      <ul class="taskLists">
+        <!-- 
+        <li class="task">
+          <p class="text">task text</p>
+          <div class="btns">
+            <button class="EditBtn">Edit</button>
+            <button class="deleteBtn">Delete</button>
+          </div>
+        </li> 
+        -->
+      </ul>
     </div>
-
-    <script src="script.js"></script>
+    <script src="./script.js"></script>
   </body>
 </html>
