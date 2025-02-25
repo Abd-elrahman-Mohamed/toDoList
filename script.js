@@ -1,107 +1,129 @@
-let input = document.getElementById("input");
+let taskInputValue = document.getElementById("input");
 let addBtn = document.getElementById("addBtn");
-let list = document.getElementById("list");
-let clearBtn = document.getElementById("clearBtn");
-const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+let list = document.querySelector(".taskLists");
+let taskArray = JSON.parse(localStorage.getItem("tasks")) || [];
+let editingTaskId = null;
 
-tasks.forEach((task) => {
-  displayTasks(task);
-});
-
-function saveToLocalStorage() {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-}
-
-function displayTasks(task) {
+taskArray.forEach((element) => {
   let li = document.createElement("li");
-  li.id = "liTask";
-  li.textContent = task.text;
-  li.dataset.id = task.id;
-  let smallContainer = document.createElement("div");
-  smallContainer.className = "small-container";
-  let span = document.createElement("span");
-  span.textContent = "Delete";
-  let edit = document.createElement("span");
-  edit.textContent = "Edit";
-  smallContainer.append(span, edit);
-  li.append(smallContainer);
+  li.classList.add("task");
+  li.dataset.id = element.id;
+  let p = document.createElement("p");
+  p.classList.add("text");
+  p.textContent = element.text;
+  let divBtns = document.createElement("div");
+  divBtns.classList.add("btns");
+  let editBtn = document.createElement("button");
+  editBtn.classList.add("EditBtn");
+  editBtn.textContent = "Edit";
+  let delBtn = document.createElement("button");
+  delBtn.classList.add("deleteBtn");
+  delBtn.textContent = "Delete";
   list.append(li);
-  // when click on edit
-  edit.addEventListener("click", (event) => {
-    const id = event.target.parentElement.parentElement.dataset.id;
-    let targetTask = tasks.find((task) => task.id == id);
-    if (edit.textContent.toLowerCase() === "edit") {
-      input.value = targetTask.text;
-      edit.textContent = "Update";
-      addBtn.remove();
-    } else {
-      const add = document.createElement("button");
-      add.id = "addBtn";
-      add.textContent = "Add";
-      document.querySelector(".first").append(add);
-      targetTask.text = input.value;
-      event.target.parentElement.parentElement.textContent = input.value;
-      edit.textContent = "Edit";
-      smallContainer.append(span, edit);
-      li.append(smallContainer);
-      list.append(li);
-      input.value = "";
+  li.append(p, divBtns);
+  divBtns.append(editBtn, delBtn);
+  delBtn.addEventListener("click", () => {
+    deleteTask(element.id);
+  });
+  editBtn.addEventListener("click", () => {
+    if (editingTaskId !== null && editingTaskId !== element.id) {
+      return;
+    }
+
+    if (editBtn.textContent === "Edit") {
+      editingTaskId = element.id;
+      addBtn.classList.add("editBtnHidden");
+      taskInputValue.value = li.firstElementChild.textContent;
+      editBtn.textContent = "Update";
+    } else if (editBtn.textContent === "Update") {
+      addBtn.classList.remove("editBtnHidden");
+      li.firstElementChild.textContent = taskInputValue.value;
+      element.text = taskInputValue.value;
+      taskInputValue.value = "";
+      editBtn.textContent = "Edit";
+      editingTaskId = null;
       saveToLocalStorage();
     }
-    // input.value = targetTask.text;
-    // edit.textContent = "update";
-    // edit.addEventListener("click", () => {
-    // targetTask.text = 'memo';
-    // });
-    // console.log(targetTask);
-    // saveToLocalStorage();
   });
-  // when click on delete
-  span.addEventListener("click", (e) => {
-    e.target.parentElement.parentElement.remove();
-    console.log(e.target.parentElement.parentElement.dataset.id);
-    let index = tasks.findIndex((task) => {
-      task.id == e.target.parentElement.parentElement.dataset.id;
-    });
-    tasks.splice(index, 1);
-    saveToLocalStorage();
-  });
-}
-
-clearBtn.addEventListener("click", () => {
-  localStorage.clear();
-  list.innerHTML = "";
 });
 
-function creation() {
-  // create a object and push it to tasks array
-  if (input.value.trim() === "") {
-    const errTxt = document.querySelector(".errText");
-    const overLay = document.querySelector(".overlay");
-    errTxt.style.display = "block";
-    overLay.style.display = "block";
-    setTimeout(() => {
-      errTxt.style.display = "none";
-      overLay.style.display = "none";
-    }, 1000);
-  } else {
-    const taskObject = {
-      text: input.value,
-      id: Date.now(),
-    };
-    tasks.push(taskObject);
-    displayTasks(taskObject);
-    saveToLocalStorage();
-    input.value = "";
+function deleteTask(id) {
+  taskArray = taskArray.filter((task) => task.id !== id);
+  saveToLocalStorage();
+  const taskElement = document.querySelector(`[data-id="${id}"]`);
+  if (taskElement) {
+    taskElement.remove();
   }
 }
 
-addBtn.addEventListener("click", () => {
-  creation();
+function saveToLocalStorage() {
+  localStorage.setItem("tasks", JSON.stringify(taskArray));
+}
+
+function createNewTask() {
+  let task = {
+    id: Date.now(),
+    text: taskInputValue.value,
+  };
+  taskArray.push(task);
+  let li = document.createElement("li");
+  li.classList.add("task");
+  li.dataset.id = task.id;
+  let p = document.createElement("p");
+  p.classList.add("text");
+  p.textContent = task.text;
+  let divBtns = document.createElement("div");
+  divBtns.classList.add("btns");
+  let editBtn = document.createElement("button");
+  editBtn.classList.add("EditBtn");
+  editBtn.textContent = "Edit";
+  let delBtn = document.createElement("button");
+  delBtn.classList.add("deleteBtn");
+  delBtn.textContent = "Delete";
+  list.append(li);
+  li.append(p, divBtns);
+  divBtns.append(editBtn, delBtn);
+  delBtn.addEventListener("click", () => {
+    deleteTask(task.id);
+  });
+  editBtn.addEventListener("click", () => {
+    if (editingTaskId !== null && editingTaskId !== task.id) {
+      return;
+    }
+    if (editBtn.textContent === "Edit") {
+      editingTaskId = task.id;
+      addBtn.classList.add("editBtnHidden");
+      taskInputValue.value = li.firstElementChild.textContent;
+      editBtn.textContent = "Update";
+    } else if (editBtn.textContent === "Update") {
+      addBtn.classList.remove("editBtnHidden");
+      li.firstElementChild.textContent = taskInputValue.value;
+      task.text = taskInputValue.value;
+      taskInputValue.value = "";
+      editBtn.textContent = "Edit";
+      editingTaskId = null;
+      saveToLocalStorage();
+    }
+  });
+  saveToLocalStorage();
+}
+
+addBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  createNewTask();
+  saveToLocalStorage();
+  taskInputValue.value = "";
 });
 
-input.addEventListener("keypress", (e) => {
-  if (e.key === "Enter" || (e.key === "Enter" && edit.textContent === "Update")) {
-    creation();
+/* 
+problem one => {
+  - can click more than edit btn and make problems
+  } solution {
+  - create that variable let editingTaskId = null;
+  and make this condition in the first of code {click on edit btn}
+      if (editingTaskId !== null && editingTaskId !== task.id) {
+      return;
+    }
+  - 
   }
-});
+*/
